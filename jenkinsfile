@@ -2,10 +2,33 @@ pipeline {
     agent any
     
     stages {
-        stage("test") {
+        stage('Build') {
             steps {
-                sh 'pwd'
-                echo "Webhook trigger test"
+                echo 'Building...'
+                echo 'building frontend image'
+                sh 'docker build -t media-frontend:v1.0 -f frontend/Dockerfile frontend'
+                echo 'building backend image'
+                sh 'docker build -t media-backend:v1.0 -f backend/Dockerfile backend'
+            }
+        }
+        stage('push images') {
+            steps {
+                echo 'Pushing images to registry...'
+                echo 'authenticating to ECR registry'
+                sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 059310318163.dkr.ecr.ap-south-1.amazonaws.com'
+                echo 'tagging frontend image'
+                sh 'docker tag media-frontend:v1.0 059310318163.dkr.ecr.ap-south-1.amazonaws.commedia-manager-frontend:v1.0'
+                echo 'tagging backend image'
+                sh 'docker tag media-backend:v1.0 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-backend:v1.0'
+                echo 'pushing frontend image'
+                sh 'docker push 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.0'
+                echo 'pushing backend image'
+                sh 'docker push 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-backend:v1.0'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
             }
         }
     }
