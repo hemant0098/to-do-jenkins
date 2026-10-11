@@ -4,7 +4,7 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
-FROM gcr.io/distroless/nodejs:21
+FROM node:21-alpine
 WORKDIR /app
 COPY --from=build /app /app
 EXPOSE 3500
