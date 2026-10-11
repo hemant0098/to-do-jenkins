@@ -4,8 +4,8 @@ pipeline {
     stages {
         stage("test") {
             steps {
-                echo "new code pushed to github"
                 sh 'pwd'
+                echo "Webhook trigger test"
             }
         }
     }
