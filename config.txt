@@ -1,0 +1,12 @@
+db 
+mongodb 
+MONGO_USERNAME
+MONGO_PASSWORD
+
+
+backend
+PORT || 3500
+MONGO_CONN_STR
+
+frontend
+REACT_APP_BACKEND_URL 

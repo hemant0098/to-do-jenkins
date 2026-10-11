@@ -1,6 +1,11 @@
-FROM node:14
-WORKDIR /usr/src/app
+FROM node:21-slim AS build
+WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-CMD ["node", "index.js"]
+
+FROM gcr.io/distroless/nodejs:21
+WORKDIR /app
+COPY --from=build /app /app
+EXPOSE 3500
+CMD ["npm", "start"]
