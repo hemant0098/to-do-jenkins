@@ -17,7 +17,7 @@ pipeline {
                 echo 'authenticating to ECR registry'
                 sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 059310318163.dkr.ecr.ap-south-1.amazonaws.com'
                 echo 'tagging frontend image'
-                sh 'docker tag media-frontend:v1.0 059310318163.dkr.ecr.ap-south-1.amazonaws.commedia-manager-frontend:v1.0'
+                sh 'docker tag media-frontend:v1.0 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.0'
                 echo 'tagging backend image'
                 sh 'docker tag media-backend:v1.0 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-backend:v1.0'
                 echo 'pushing frontend image'
