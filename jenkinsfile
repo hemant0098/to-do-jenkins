@@ -6,9 +6,9 @@ pipeline {
             steps {
                 echo 'Building...'
                 echo 'building frontend image'
-                sh 'docker build -t media-frontend:v1.2 -f Application-Code/frontend/Dockerfile Application-Code/frontend'
+                sh 'docker build -t media-frontend:v1.3 -f Application-Code/frontend/Dockerfile Application-Code/frontend'
                 echo 'building backend image'
-                sh 'docker build -t media-backend:v1.2 -f Application-Code/backend/Dockerfile Application-Code/backend'
+                sh 'docker build -t media-backend:v1.3 -f Application-Code/backend/Dockerfile Application-Code/backend'
             }
         }
         stage('push images') {
