@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-app
+  namespace: jenkins-app
+  labels:
+    app: backend-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend-app
+  template:
+    metadata:
+      labels:
+        app: backend-app
+    spec:
+      containers:
+      - name: backend-app
+        image: 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-backend:v1.0
+        env:
+        - name: MONGO_CONN_STR
+          value: "mongodb://hemant:hemant0098@mongodb:27017"
+        ports:
+        - containerPort: 3000
+          name: backend-app

@@ -29,6 +29,16 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying...'
+                echo 'creating mongodb database'
+                sh 'kubectl apply -f k8s/mongo-deployment.yml'
+                echo 'creating frontend deployment'
+                sh 'kubectl apply -f k8s/frontend-deployment.yml'
+                echo 'creating backend deployment'
+                sh 'kubectl apply -f k8s/backend-deployment.yml'
+                echo 'creating frontend service'
+                sh 'kubectl apply -f k8s/frontend-service.yml'
+                echo 'creating backend service'
+                sh 'kubectl apply -f k8s/backend-service.yml'
             }
         }
     }

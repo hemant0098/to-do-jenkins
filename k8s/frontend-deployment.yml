@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-app
+  namespace: jenkins-app
+  labels:
+    app: frontend-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend-app
+  template:
+    metadata:
+      labels:
+        app: frontend-app
+    spec:
+      containers:
+      - name: frontend-app
+        image: 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.0
+        env:
+        - name: BACKEND_URL
+          value: "http://backend-app:3000"
+        ports:
+        - containerPort: 3000
+          name: frontend-app
