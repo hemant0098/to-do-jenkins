@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: frontend-app
-        image: 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.0
+        image: 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.2
         env:
         - name: BACKEND_URL
           value: "http://backend-app:3000"

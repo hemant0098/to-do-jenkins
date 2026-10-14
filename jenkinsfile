@@ -6,9 +6,9 @@ pipeline {
             steps {
                 echo 'Building...'
                 echo 'building frontend image'
-                sh 'docker build -t media-frontend:v1.1 -f Application-Code/frontend/Dockerfile Application-Code/frontend'
+                sh 'docker build -t media-frontend:v1.2 -f Application-Code/frontend/Dockerfile Application-Code/frontend'
                 echo 'building backend image'
-                sh 'docker build -t media-backend:v1.1 -f Application-Code/backend/Dockerfile Application-Code/backend'
+                sh 'docker build -t media-backend:v1.2 -f Application-Code/backend/Dockerfile Application-Code/backend'
             }
         }
         stage('push images') {
@@ -17,13 +17,13 @@ pipeline {
                 echo 'authenticating to ECR registry'
                 sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 059310318163.dkr.ecr.ap-south-1.amazonaws.com'
                 echo 'tagging frontend image'
-                sh 'docker tag media-frontend:v1.1 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.1'
+                sh 'docker tag media-frontend:v1.2 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.2'
                 echo 'tagging backend image'
-                sh 'docker tag media-backend:v1.1 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-backend:v1.1'
+                sh 'docker tag media-backend:v1.2 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-backend:v1.2'
                 echo 'pushing frontend image'
-                sh 'docker push 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.1'
+                sh 'docker push 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.2'
                 echo 'pushing backend image'
-                sh 'docker push 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-backend:v1.1'
+                sh 'docker push 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-backend:v1.2'
             }
         }
         stage('Deploy') {
