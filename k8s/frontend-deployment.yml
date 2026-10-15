@@ -19,10 +19,7 @@ spec:
       - name: ecr-secret
       containers:
       - name: frontend-app
-        image: 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.7
-        env:
-        - name: REACT_APP_BACKEND_URL
-          value: "http://13.232.174.208:30001/api/tasks"
+        image: 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.8
         ports:
         - containerPort: 80
           name: frontend-app

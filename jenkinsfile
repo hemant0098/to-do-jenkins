@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         BACKEND_IMAGE_VERSION = "v1.7"
-        FRONTEND_IMAGE_VERSION = "v1.7"
+        FRONTEND_IMAGE_VERSION = "v1.8"
         ECR_REGISTRY = "059310318163.dkr.ecr.ap-south-1.amazonaws.com"
         BACKEND_REPO = "media-manager-backend"
         FRONTEND_REPO = "media-manager-frontend"
