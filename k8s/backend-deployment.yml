@@ -19,7 +19,7 @@ spec:
         - name: ecr-secret
       containers:
       - name: backend-app
-        image: 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-backend:v1.5
+        image: 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-backend:v1.6
         env:
         - name: MONGO_CONN_STR
           value: "mongodb://hemant:hemant0098@mongodb:27017"
