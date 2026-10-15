@@ -1,51 +1,67 @@
 pipeline {
     agent any
-    
+
+    environment {
+        BACKEND_IMAGE_VERSION = "v1.6"
+        FRONTEND_IMAGE_VERSION = "v1.6"
+        ECR_REGISTRY = "059310318163.dkr.ecr.ap-south-1.amazonaws.com"
+        BACKEND_REPO = "media-manager-backend"
+        FRONTEND_REPO = "media-manager-frontend"
+    }
+
     stages {
         stage('Build') {
             steps {
-                echo 'Building...'
-                echo 'building frontend image'
-                sh 'docker build -t media-frontend:v1.6 -f Application-Code/frontend/Dockerfile Application-Code/frontend'
-                echo 'building backend image'
-                sh 'docker build -t media-backend:v1.6 -f Application-Code/backend/Dockerfile Application-Code/backend'
+                script {
+                    if (sh(script: "docker image inspect media-backend:${BACKEND_IMAGE_VERSION} > /dev/null 2>&1", returnStatus: true) ==0) {
+                        echo "Backend image already exists. Skipping build."
+                    } else {
+                        echo "Building backend image..."
+                        sh "docker build -t media-backend:${BACKEND_IMAGE_VERSION} -f Application-Code/backend/Dockerfile ./Application-Code/backend"
+                    } 
+                    if (sh(script: "docker image inspect media-frontend:${FRONTEND_IMAGE_VERSION} > /dev/null 2>&1", returnStatus: true) ==0) {
+                        echo "Frontend image already exists. Skipping build."
+                    } else {
+                        echo "Building frontend image..."
+                        sh "docker build -t media-frontend:${FRONTEND_IMAGE_VERSION} -f Application-Code/frontend/Dockerfile ./Application-Code/frontend"
+                    }
+                }
             }
         }
-        stage('push images') {
+        stage('push to ECR') {
             steps {
-                echo 'Pushing images to registry...'
-                echo 'authenticating to ECR registry'
-                sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 059310318163.dkr.ecr.ap-south-1.amazonaws.com'
-                echo 'tagging frontend image'
-                sh 'docker tag media-frontend:v1.6 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.6'
-                echo 'tagging backend image'
-                sh 'docker tag media-backend:v1.6 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-backend:v1.6'
-                echo 'pushing frontend image'
-                sh 'docker push 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.6'
-                echo 'pushing backend image'
-                sh 'docker push 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-backend:v1.6'
+                script {
+                        sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin ${ECR_REGISTRY}"
+                    if (sh(script: "docker image inspect ${ECR_REGISTRY}/${BACKEND_REPO}:${BACKEND_IMAGE_VERSION} > /dev/null 2>&1", returnStatus: true) ==0) {
+                        echo "Backend image already exists in ECR. Skipping push."
+                    } else {
+                        echo "Pushing backend image to ECR..."
+                        sh "docker tag media-backend:${BACKEND_IMAGE_VERSION} ${ECR_REGISTRY}/${BACKEND_REPO}:${BACKEND_IMAGE_VERSION}"
+                        sh "docker push ${ECR_REGISTRY}/${BACKEND_REPO}:${BACKEND_IMAGE_VERSION}"
+                    }
+                    if (sh(script: "docker image inspect ${ECR_REGISTRY}/${FRONTEND_REPO}:${FRONTEND_IMAGE_VERSION} > /dev/null 2>&1", returnStatus: true) ==0) {
+                        echo "Frontend image already exists in ECR. Skipping push."
+                    } else {
+                        echo "Pushing frontend image to ECR..."
+                        sh "docker tag media-frontend:${FRONTEND_IMAGE_VERSION} ${ECR_REGISTRY}/${FRONTEND_REPO}:${FRONTEND_IMAGE_VERSION}"
+                        sh "docker push ${ECR_REGISTRY}/${FRONTEND_REPO}:${FRONTEND_IMAGE_VERSION}"
+                    }
+                }
             }
         }
-        stage('Deploy') {
+        stage('Deploy to Kubernetes') {
             steps {
-                echo 'Deploying...'
-                echo 'creating mongodb database'
-                sh 'kubectl apply -f k8s/mongodb-statefulset.yml'
-                echo 'creating frontend deployment'
-                sh 'kubectl apply -f k8s/frontend-deployment.yml'
-                echo 'creating backend deployment'
-                sh 'kubectl apply -f k8s/backend-deployment.yml'
-                echo 'creating mongodb service'
-                sh 'kubectl apply -f k8s/mongodb-service.yml'
-                echo 'creating frontend service'
-                sh 'kubectl apply -f k8s/frontend-service.yml'
-                echo 'creating backend service'
-                sh 'kubectl apply -f k8s/backend-service.yml'
+                script {
+                    sh '''
+                    kubectl apply -f k8s/mongodb-service.yml
+                    kubectl apply -f k8s/mongodb-statefulset.yml
+                    kubectl apply -f k8s/backend-deployment.yml
+                    kubectl apply -f k8s/backend-service.yml
+                    kubectl apply -f k8s/frontend-deployment.yml
+                    kubectl apply -f k8s/frontend-service.yml"
+                 '''
+                }
             }
         }
     }
-
 }
-
-
-

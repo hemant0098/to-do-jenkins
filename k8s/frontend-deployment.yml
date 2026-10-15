@@ -21,8 +21,8 @@ spec:
       - name: frontend-app
         image: 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.6
         env:
-        - name: BACKEND_URL
-          value: "http://backend-app:3000"
+        - name: REACT_APP_BACKEND_URL
+          value: "http://backend-app:3000/api/tasks"
         ports:
         - containerPort: 80
           name: frontend-app
