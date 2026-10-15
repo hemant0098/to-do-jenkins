@@ -19,10 +19,10 @@ spec:
       - name: ecr-secret
       containers:
       - name: frontend-app
-        image: 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.3
+        image: 059310318163.dkr.ecr.ap-south-1.amazonaws.com/media-manager-frontend:v1.4
         env:
         - name: BACKEND_URL
           value: "http://backend-app:3000"
         ports:
-        - containerPort: 3000
+        - containerPort: 80
           name: frontend-app
